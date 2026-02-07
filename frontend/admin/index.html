@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Win Driver - Admin Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="/js/auth-check.js"></script>
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --accent: #3498db;
+            --bg: #f4f7f6;
+        }
+
+        body {
+            font-family: 'Prompt', sans-serif;
+            background: var(--bg);
+            margin: 0;
+        }
+
+        .sidebar {
+            width: 250px;
+            background: var(--primary);
+            height: 100vh;
+            position: fixed;
+            color: white;
+            padding: 20px;
+        }
+
+        .main-content {
+            margin-left: 270px;
+            padding: 30px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            margin-bottom: 20px;
+        }
+
+        .nav-item {
+            padding: 15px;
+            margin: 5px 0;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .nav-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .nav-item.active {
+            background: var(--accent);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="sidebar">
+        <h2>Win Driver Admin</h2>
+        <div class="nav-item active"><i class="fas fa-chart-line"></i> Dashboard</div>
+        <div class="nav-item"><i class="fas fa-users"></i> จัดการผู้ใช้</div>
+        <div class="nav-item"><i class="fas fa-motorcycle"></i> จัดการคนขับ</div>
+        <div class="nav-item" onclick="logout()"><i class="fas fa-sign-out-alt"></i> ออกจากระบบ</div>
+    </div>
+    <div class="main-content">
+        <div class="header">
+            <h1>จัดการผู้ใช้ในระบบ</h1>
+            <div>ยินดีต้อนรับ, <span id="adminName">Admin</span></div>
+        </div>
+
+        <div class="card">
+            <h3>รายชื่อผู้ใช้ทั้งหมด</h3>
+            <p style="color: #e67e22; font-size: 0.9rem; margin-bottom: 20px;">* รหัสผ่านถูกเข้ารหัส (Hashed)
+                เพื่อความปลอดภัย ไม่สามารถดูเป็นตัวอักษรปกติได้</p>
+            <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+                <thead>
+                    <tr style="background: #eee; text-align: left;">
+                        <th style="padding: 12px; border: 1px solid #ddd;">ชื่อ</th>
+                        <th style="padding: 12px; border: 1px solid #ddd;">เบอร์โทร</th>
+                        <th style="padding: 12px; border: 1px solid #ddd;">บทบาท</th>
+                        <th style="padding: 12px; border: 1px solid #ddd;">รหัสผ่าน (Hash)</th>
+                    </tr>
+                </thead>
+                <tbody id="userTableBody">
+                    <!-- ข้อมูลจะถูกโหลดที่นี่ -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('adminName').innerText = localStorage.getItem('name') || 'Admin';
+
+        async function loadUsers() {
+            try {
+                const res = await fetch('/api/admin/users', {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    }
+                });
+
+                if (!res.ok) throw new Error('ไม่สามารถดึงข้อมูลได้');
+
+                const users = await res.json();
+                const tbody = document.getElementById('userTableBody');
+                tbody.innerHTML = '';
+
+                users.forEach(user => {
+                    const row = `
+                        <tr>
+                            <td style="padding: 12px; border: 1px solid #ddd;">${user.name}</td>
+                            <td style="padding: 12px; border: 1px solid #ddd;">${user.phone}</td>
+                            <td style="padding: 12px; border: 1px solid #ddd;">
+                                <span style="padding: 4px 8px; border-radius: 5px; background: ${user.role === 'admin' ? '#f1c40f' : user.role === 'driver' ? '#3498db' : '#2ecc71'}; color: white;">
+                                    ${user.role}
+                                </span>
+                            </td>
+                            <td style="padding: 12px; border: 1px solid #ddd; font-family: monospace; font-size: 0.8rem; color: #999;">
+                                ${user.passwordHash.substring(0, 20)}...
+                            </td>
+                        </tr>
+                    `;
+                    tbody.innerHTML += row;
+                });
+            } catch (err) {
+                console.error(err);
+                alert('เกิดข้อผิดพลาดในการโหลดข้อมูล');
+            }
+        }
+
+        loadUsers();
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Win Driver - Driver Dashboard</title>
+
+  <!-- Fonts & Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+
+  <link rel="stylesheet" href="./css/style.css">
+  <script src="/js/auth-check.js"></script>
+</head>
+
+<body>
+
+  <!-- Map Container -->
+  <div id="map-container" class="custom-map-engine">
+    <div id="map"></div>
+  </div>
+
+  <!-- Floating Controls -->
+  <div class="controls-overlay">
+    <button class="feature-btn" onclick="toggleSound()" title="เสียงแจ้งเตือน">
+      <i class="fas fa-volume-up" id="sound-icon"></i>
+    </button>
+    <button class="feature-btn" onclick="panToCurrentLocation()" title="ตำแหน่งปัจจุบัน">
+      <i class="fas fa-crosshairs"></i>
+    </button>
+  </div>
+
+  <main class="app-shell">
+    <!-- Top Nav -->
+    <header class="top-nav-new">
+      <div class="brand">
+        <img src="https://cdn.phototourl.com/uploads/2026-01-25-d3a1e506-64e3-47ea-be7f-09e23ec0c646.png" width="30">
+        <span>Win Driver</span>
+      </div>
+
+      <div class="user-header-box">
+        <button class="notif-btn-float" onclick="toggleNotifications()" title="การแจ้งเตือน">
+          <i class="fas fa-bell"></i>
+          <span class="notif-dot"></span>
+        </button>
+        <button class="history-btn-float" onclick="toggleHistory()" title="ประวัติงาน">
+          <i class="fas fa-list-ul"></i>
+        </button>
+        <div class="user-info-text">
+          <span id="driverPhone">0XX-XXX-XXXX</span>
+          <small onclick="logout()">ออกจากระบบ</small>
+        </div>
+        <div class="avatar-box">
+          <img id="driverProfile" src="" alt="Driver">
+        </div>
+      </div>
+    </header>
+
+    <!-- UI Panels -->
+    <div class="ui-content-layer">
+
+      <!-- 1. Offline Panel -->
+      <section id="panel-offline" class="bottom-card">
+        <div class="switch-container">
+          <span class="switch-label">
+            <i class="fas fa-power-off" style="font-size: 0.9em;"></i>
+            <span>ปิดรับงาน</span>
+          </span>
+          <label class="toggle-switch">
+            <input type="checkbox" id="toggle-work-off" onchange="toggleStatus()">
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <div class="stat-grid-mini">
+          <div class="stat-item">
+            <h3 id="today-income">฿0</h3>
+            <p>รายได้วันนี้</p>
+          </div>
+          <div class="stat-item">
+            <h3 id="today-jobs">0 งาน</h3>
+            <p>งานวันนี้</p>
+          </div>
+        </div>
+
+        <!-- Greeting Section -->
+        <div style="text-align:center; margin-top: 20px;" class="animate__animated animate__fadeIn">
+          <h2 id="greeting-text"
+            style="font-size: 1.5rem; color: var(--secondary); font-weight: 800; margin-bottom: 5px;">
+            สวัสดีตอนเช้า! ☀️
+          </h2>
+          <p style="color:var(--text-muted); font-size:0.9rem;">พร้อมลุยงานหรือยังครับ?</p>
+        </div>
+      </section>
+
+      <!-- 2. Searching Panel -->
+      <section id="panel-searching" class="bottom-card hidden">
+        <div class="switch-container">
+          <span class="switch-label" style="color: var(--success); display:flex; align-items:center; gap:10px;">
+            <span style="position:relative; display:flex;">
+              <span style="width:12px; height:12px; background:var(--success); border-radius:50%;"></span>
+              <span
+                style="position:absolute; width:12px; height:12px; background:var(--success); border-radius:50%; animation: ping 1s infinite; opacity:0.5;"></span>
+            </span>
+            ONLINE
+          </span>
+          <label class="toggle-switch">
+            <input type="checkbox" id="toggle-work-on" checked onchange="toggleStatus()">
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <div style="text-align: center; padding: 20px 0;">
+
+          <!-- Radar Animation -->
+          <div class="radar-scan">
+            <i class="fas fa-motorcycle radar-icon"></i>
+          </div>
+
+          <p class="typing-dots" style="font-weight:700; font-size:1.3rem; margin-bottom: 8px;">กำลังรอเรียกงาน</p>
+          <p style="font-size:0.85rem; color:var(--text-muted);">ระบบค้นหาผู้โดยสารอัตโนมัติ...</p>
+        </div>
+      </section>
+
+      <!-- 3. Job Request Panel -->
+      <section id="panel-request" class="bottom-card hidden">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+          <h3 style="color:var(--secondary);" class="animate__animated animate__pulse animate__infinite">งานเรียกใหม่!
+          </h3>
+          <span class="payment-badge" id="job-payment-badge">เงินสด</span>
+        </div>
+
+        <!-- Timer -->
+        <div
+          style="width: 100%; height: 6px; background: #eee; margin-bottom: 20px; border-radius: 3px; overflow:hidden;">
+          <div id="timer-bar"
+            style="width: 100%; height: 100%; background: var(--danger); transition: width 0.1s linear;"></div>
+        </div>
+
+        <div class="job-info-row">
+          <div class="info-box">
+            <i class="fas fa-coins"></i>
+            <div style="text-align:left;">
+              <span style="font-size: 0.75rem; color: #64748b; font-weight:700;">ค่าโดยสาร</span>
+              <strong style="display: block; font-size: 1.3rem; color:var(--success);" id="job-price">฿0</strong>
+            </div>
+          </div>
+          <div class="info-box">
+            <i class="fas fa-route"></i>
+            <div style="text-align:left;">
+              <span style="font-size: 0.75rem; color: #64748b; font-weight:700;">ระยะทาง</span>
+              <strong style="display: block;" id="job-dist">- กม.</strong>
+            </div>
+          </div>
+        </div>
+
+        <div class="location-timeline">
+          <div class="loc-point pickup">
+            <div class="loc-text">
+              <strong>จุดรับผู้โดยสาร</strong>
+              <span id="pickup-dist">คำนวณ...</span>
+            </div>
+          </div>
+          <div class="loc-point dropoff">
+            <div class="loc-text">
+              <strong>จุดส่งผู้โดยสาร</strong>
+              <span>ปลายทาง</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="btn-group">
+          <button class="btn-main btn-reject" onclick="rejectJob()">ปฏิเสธ</button>
+          <button class="btn-main" style="background: var(--success);" onclick="acceptJob()">รับงานทันที</button>
+        </div>
+      </section>
+
+      <!-- 4. Active Job Panel -->
+      <section id="panel-active" class="bottom-card hidden">
+        <div
+          style="display: flex; justify-content: space-between; margin-bottom: 20px; border-bottom:1px solid #eee; padding-bottom:15px;">
+          <div>
+            <h3 style="margin-bottom:5px;">รับส่งผู้โดยสาร</h3>
+            <div id="active-payment-type" style="font-size: 0.8rem; color: #64748b; font-weight:700;">เงินสด</div>
+          </div>
+          <div class="text-right">
+            <div id="active-price" style="font-size: 1.8rem; font-weight: 900; color: var(--success);">฿0</div>
+          </div>
+        </div>
+
+        <div class="location-timeline">
+          <div class="loc-point pickup">
+            <div class="loc-text">
+              <strong>รับที่</strong>
+              <span id="active-pickup">...</span>
+            </div>
+          </div>
+          <div class="loc-point dropoff">
+            <div class="loc-text">
+              <strong>ส่งที่</strong>
+              <span id="active-dropoff">...</span>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top:20px;">
+          <button id="btn-arrive" class="btn-main" onclick="arriveAtPickup()">ถึงจุดรับแล้ว</button>
+          <button id="btn-start-trip" class="btn-main hidden" onclick="startTrip()"
+            style="background:var(--secondary); color:#FFD700;">เริ่มการเดินทาง</button>
+          <button id="btn-finish" class="btn-main hidden" style="background: var(--success);"
+            onclick="finishJob()">ส่งถึงที่หมาย / จบงาน</button>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- Notification Side Drawer -->
+  <aside id="notification-panel" class="side-drawer">
+    <div class="drawer-header">
+      <h3><i class="fas fa-bell"></i> การแจ้งเตือน</h3>
+      <button class="close-drawer" onclick="toggleNotifications()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="history-scroll-area">
+      <!-- Mock Notifications -->
+      <div class="notif-item type-bonus">
+        <div class="notif-icon">
+          <i class="fas fa-gift"></i>
+        </div>
+        <div class="notif-content">
+          <h4>โบนัสพิเศษ! 🎁</h4>
+          <p>ทำยอดครบ 10 งานวันนี้ รับเพิ่มทันที 100 บาท</p>
+          <span class="time">2 นาทีที่แล้ว</span>
+        </div>
+      </div>
+
+      <div class="notif-item type-alert">
+        <div class="notif-icon">
+          <i class="fas fa-exclamation-triangle"></i>
+        </div>
+        <div class="notif-content">
+          <h4>พื้นที่จราจรหนาแน่น 🚗</h4>
+          <p>บริเวณวงเวียนบางเขนรถติดมาก โปรดหลีกเลี่ยง</p>
+          <span class="time">30 นาทีที่แล้ว</span>
+        </div>
+      </div>
+
+      <div class="notif-item type-income">
+        <div class="notif-icon">
+          <i class="fas fa-money-bill-wave"></i>
+        </div>
+        <div class="notif-content">
+          <h4>เงินเข้ากระเป๋า 💵</h4>
+          <p>ยอดเงิน 500 บาท โอนเข้าบัญชีของคุณเรียบร้อยแล้ว</p>
+          <span class="time">เมื่อวานนี้</span>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Side Drawer -->
+  <aside id="history-panel" class="side-drawer">
+    <div class="drawer-header">
+      <h3><i class="fas fa-history"></i> ประวัติงานของฉัน</h3>
+      <button class="close-drawer" onclick="toggleHistory()"><i class="fas fa-times"></i></button>
+    </div>
+    <div id="history-list" class="history-scroll-area">
+      <!-- Injected -->
+    </div>
+  </aside>
+
+  <!-- Payment Modal -->
+  <div id="payment-modal" class="modal-overlay hidden">
+    <div class="modal-card animate__animated animate__zoomIn">
+      <div style="margin-bottom:20px;">
+        <i class="fas fa-check-circle" style="font-size: 5rem; color: var(--success);"></i>
+      </div>
+      <h2>จบงานเรียบร้อย!</h2>
+      <p style="color:#64748b;">ยอดเงินที่ได้รับรวม</p>
+
+      <div id="final-price" style="font-size: 3.5rem; font-weight: 900; margin: 20px 0; color:var(--secondary);">฿0
+      </div>
+
+      <div id="qr-section" class="hidden"
+        style="background:#f1f5f9; padding:15px; border-radius:15px; margin-bottom:20px;">
+        <p style="font-size:0.8rem; font-weight:700;">ผู้โดยสารชำระผ่าน PromptPay</p>
+        <i class="fas fa-qrcode" style="font-size:2rem; margin-top:10px; color:#64748b;"></i>
+      </div>
+
+      <button class="btn-main" onclick="closePaymentModal()">กลับไปรับงานต่อ</button>
+    </div>
+  </div>
+
+  <script>
+    // Profile Logic
+    const phone = localStorage.getItem('phone') || '081-234-5678';
+    document.getElementById('driverPhone').innerText = phone;
+
+    let profilePic = localStorage.getItem('driver_profile_pic');
+    if (!profilePic) {
+      const randomId = Math.floor(Math.random() * 70) + 1;
+      profilePic = `https://randomuser.me/api/portraits/men/${randomId}.jpg`;
+      localStorage.setItem('driver_profile_pic', profilePic);
+    }
+    document.getElementById('driverProfile').src = profilePic;
+
+    // Greeting Logic
+    const hour = new Date().getHours();
+    const greetingEl = document.getElementById('greeting-text');
+    if (greetingEl) {
+      if (hour < 12) greetingEl.innerHTML = 'สวัสดีตอนเช้า! ☀️';
+      else if (hour < 18) greetingEl.innerHTML = 'สวัสดีตอนบ่าย! 🌤️';
+      else greetingEl.innerHTML = 'สวัสดีตอนเย็น! 🌙';
+    }
+
+    // Sound Logic
+    let soundEnabled = true;
+    function toggleSound() {
+      soundEnabled = !soundEnabled;
+      const icon = document.getElementById('sound-icon');
+      if (soundEnabled) {
+        icon.className = 'fas fa-volume-up';
+        // Play test sound
+        playNotificationSound();
+      } else {
+        icon.className = 'fas fa-volume-mute';
+      }
+    }
+
+    function playNotificationSound() {
+      if (!soundEnabled) return;
+      // Simple beep using Web Audio API to avoid external files
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(500, ctx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(1000, ctx.currentTime + 0.1);
+
+      gain.gain.setValueAtTime(0.1, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.5);
+
+      osc.start();
+      osc.stop(ctx.currentTime + 0.5);
+    }
+  </script>
+
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+  <script src="./js/app.js"></script>
+
+</body>
+
+</html>

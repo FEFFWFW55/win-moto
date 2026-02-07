@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Win Driver - เข้าสู่ระบบ</title>
+
+    <!-- Favicon -->
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏍️</text></svg>">
+
+    <!-- Theme Color -->
+    <meta name="theme-color" content="#FFD700">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <!-- SEO Meta -->
+    <meta name="description" content="Win Driver - แอปเรียกวินมอเตอร์ไซค์ที่ง่ายที่สุด รวดเร็ว ปลอดภัย ราคาเป็นมิตร">
+    <meta name="keywords" content="วินมอเตอร์ไซค์, เรียกวิน, แอปเรียกรถ, Win Driver, มอเตอร์ไซค์รับจ้าง">
+
+    <!-- Bootstrap 5.3.3 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700;800;900&family=Outfit:wght@400;700;900&display=swap"
+        rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Animate.css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+    <!-- Vanilla Tilt -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.8.1/vanilla-tilt.min.js"></script>
+
+    <style>
+        :root {
+            --p1: #FFD700;
+            --p2: #FF6B00;
+            --s1: #121212;
+            --gradient: linear-gradient(135deg, #FFD700 0%, #FF6B00 100%);
+            --bg-gradient: linear-gradient(135deg, #FFF5E6 0%, #FFFFFF 100%);
+            --shadow: 0 20px 60px rgba(255, 165, 0, 0.15);
+            --neon-1: #FF0055;
+            --neon-2: #00E5FF;
+        }
+
+        body {
+            font-family: 'Prompt', sans-serif;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #fdfdfd;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* ตกแต่งพื้นหลังด้วยวงกลมลอยไปมา */
+        .bg-shape {
+            position: absolute;
+            z-index: -1;
+            filter: blur(60px);
+            border-radius: 50%;
+            animation: float 10s infinite ease-in-out;
+            opacity: 0.7;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translate(0, 0) rotate(0deg);
+            }
+
+            33% {
+                transform: translate(30px, -50px) rotate(10deg);
+            }
+
+            66% {
+                transform: translate(-20px, 20px) rotate(-5deg);
+            }
+        }
+
+        .shape-1 {
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, #FFD700, #FF6B00);
+            top: -100px;
+            left: -100px;
+            animation-duration: 15s;
+        }
+
+        .shape-2 {
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, #00E5FF, #0051FF);
+            bottom: -50px;
+            right: -50px;
+            animation-duration: 12s;
+            opacity: 0.5;
+        }
+
+        .shape-3 {
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, #FF0055, #FF00CC);
+            top: 40%;
+            left: 80%;
+            animation-duration: 8s;
+            opacity: 0.4;
+        }
+
+        .shape-4 {
+            width: 150px;
+            height: 150px;
+            background: #00FF99;
+            bottom: 20%;
+            left: 10%;
+            animation-duration: 18s;
+            filter: blur(40px);
+        }
+
+        /* แสงแฟลร์สีทองตามเมาส์ */
+        .mouse-glow {
+            position: fixed;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(255, 215, 0, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: -1;
+            transform: translate(-50%, -50%);
+            transition: width 0.3s, height 0.3s;
+        }
+
+        .auth-card {
+            width: 100%;
+            max-width: 440px;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px);
+            border-radius: 40px;
+            padding: 50px 40px;
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            position: relative;
+            transition: all 0.5s ease;
+        }
+
+        .auth-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 30px 80px rgba(255, 165, 0, 0.2);
+        }
+
+        .logo-area {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .icon-box {
+            width: 80px;
+            height: 80px;
+            background: var(--gradient);
+            border-radius: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            color: var(--s1);
+            margin: 0 auto 20px;
+            box-shadow: 0 10px 25px rgba(255, 165, 0, 0.4);
+            animation: bounceIn 1s;
+        }
+
+        .auth-title {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 900;
+            font-size: 2.5rem;
+            margin: 0;
+            background: linear-gradient(45deg, #FFD700, #FF6B00, #FF0055, #a200ff);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradientMove 5s ease infinite;
+        }
+
+        @keyframes gradientMove {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .auth-subtitle {
+            font-size: 0.95rem;
+            color: #777;
+            margin-top: 5px;
+        }
+
+        .form-label {
+            font-weight: 700;
+            font-size: 0.85rem;
+            color: #444;
+            margin-bottom: 10px;
+            padding-left: 5px;
+        }
+
+        .input-wrapper {
+            position: relative;
+            margin-bottom: 25px;
+        }
+
+        .input-wrapper i {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #999;
+            transition: 0.3s;
+        }
+
+        .custom-input {
+            width: 100%;
+            padding: 18px 20px 18px 55px;
+            background: #f0f2f5;
+            border: 2px solid transparent;
+            border-radius: 20px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .custom-input:focus {
+            background: #fff;
+            border-color: var(--p1);
+            box-shadow: 0 10px 25px rgba(255, 215, 0, 0.3);
+            outline: none;
+            transform: translateY(-2px);
+        }
+
+        .custom-input:focus+i {
+            color: var(--p2);
+            transform: translateY(-50%) scale(1.2);
+            text-shadow: 0 0 10px rgba(255, 165, 0, 0.4);
+        }
+
+        /* Role Switcher */
+        .role-switcher {
+            display: flex;
+            background: #f0f2f5;
+            padding: 6px;
+            border-radius: 18px;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .role-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            background: transparent;
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: #888;
+            z-index: 2;
+            transition: 0.3s;
+        }
+
+        .role-btn.active {
+            color: var(--s1);
+        }
+
+        .role-slider {
+            position: absolute;
+            top: 6px;
+            left: 6px;
+            width: calc(50% - 6px);
+            height: calc(100% - 12px);
+            background: #fff;
+            border-radius: 14px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 1;
+        }
+
+        .role-btn.driver-active~.role-slider {
+            transform: translateX(100%);
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(90deg, #FFD700, #FF6B00, #FF0055);
+            background-size: 200% auto;
+            border: none;
+            border-radius: 20px;
+            color: white;
+            font-size: 1.1rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 10px 20px rgba(255, 107, 0, 0.4);
+            transition: all 0.4s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-submit:hover {
+            background-position: right center;
+            transform: scale(1.03) translateY(-3px);
+            box-shadow: 0 15px 30px rgba(255, 0, 85, 0.4);
+        }
+
+        .auth-footer {
+            margin-top: 30px;
+            text-align: center;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #666;
+        }
+
+        .toggle-btn {
+            color: var(--p2);
+            cursor: pointer;
+            text-decoration: underline;
+            margin-left: 5px;
+        }
+
+        /* Loading Spinner */
+        .loader {
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(0, 0, 0, 0.1);
+            border-top-color: var(--s1);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            display: none;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Alert Styles */
+        .alert-custom {
+            position: fixed;
+            top: 25px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 18px 35px;
+            border-radius: 25px;
+            font-weight: 800;
+            font-size: 1.1rem;
+            text-align: center;
+            display: none;
+            z-index: 10000;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(20px);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            min-width: 380px;
+            color: white;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .alert-error {
+            background: rgba(231, 76, 60, 0.9);
+            border-color: #e74c3c;
+        }
+
+        .alert-success {
+            background: rgba(46, 204, 113, 0.9);
+            border-color: #2ecc71;
+        }
+
+        /* OTP Styles */
+        .otp-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            z-index: 20000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .otp-card {
+            background: white;
+            padding: 40px;
+            border-radius: 30px;
+            text-align: center;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 20px 60px rgba(255, 215, 0, 0.3);
+        }
+
+        .otp-icon {
+            font-size: 3rem;
+            color: var(--p1);
+            margin-bottom: 20px;
+        }
+
+        .otp-inputs {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        .otp-input {
+            width: 45px;
+            height: 55px;
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: 800;
+            border: 2px solid #ddd;
+            border-radius: 12px;
+            transition: 0.3s;
+        }
+
+        .otp-input:focus {
+            border-color: var(--p1);
+            outline: none;
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
+            transform: scale(1.1);
+        }
+
+        /* Confetti */
+        .confetti-piece {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: #ffd700;
+            top: 0;
+            opacity: 0;
+            z-index: 10001;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="bg-shape shape-1" data-speed="2"></div>
+    <div class="bg-shape shape-2" data-speed="-3"></div>
+    <div class="bg-shape shape-3" data-speed="1.5"></div>
+    <div class="bg-shape shape-4" data-speed="-1"></div>
+    <div class="mouse-glow" id="mouseGlow"></div>
+
+    <div class="auth-card animate__animated animate__zoomIn" data-tilt data-tilt-max="5" data-tilt-speed="400"
+        data-tilt-glare data-tilt-max-glare="0.1">
+
+        <div id="errorMessage" class="alert-custom alert-error"></div>
+        <div id="successMessage" class="alert-custom alert-success"></div>
+
+        <div class="logo-area">
+            <div class="icon-box">
+                <i class="fas fa-motorcycle"></i>
+            </div>
+            <h1 class="auth-title">WIN DRIVER</h1>
+            <p class="auth-subtitle" id="authSubtitle">พร้อมเดินทางไปกับเราหรือยัง?</p>
+        </div>
+
+        <form id="authForm" onsubmit="event.preventDefault(); handleAuth();">
+
+            <!-- Register Mode Fields (Role Switcher) -->
+            <div id="registerFields" style="display: none;">
+                <label class="form-label">สมัครเป็นสมาชิกแบบไหน?</label>
+                <div class="role-switcher">
+                    <button type="button" class="role-btn active" id="btnUser"
+                        onclick="updateRole('user')">ผู้โดยสาร</button>
+                    <button type="button" class="role-btn" id="btnDriver"
+                        onclick="updateRole('driver')">คนขับวิน</button>
+                    <div class="role-slider" id="roleSlider"></div>
+                </div>
+            </div>
+
+            <div class="input-group-container">
+                <label class="form-label">เบอร์โทรศัพท์ของคุณ</label>
+                <div class="input-wrapper">
+                    <input type="tel" class="custom-input" id="phone" maxlength="10" placeholder="0XXXXXXXXX">
+                    <i class="fas fa-phone-alt"></i>
+                </div>
+            </div>
+
+            <div class="input-group-container">
+                <label class="form-label">รหัสผ่านลับ (8 หลัก)</label>
+                <div class="input-wrapper">
+                    <input type="password" class="custom-input" id="password" maxlength="8" placeholder="••••••••">
+                    <i class="fas fa-lock"></i>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-submit" id="authBtn">
+                <span id="btnText">เข้าสู่ระบบเลย</span>
+                <div class="loader" id="btnLoader"></div>
+                <i class="fas fa-arrow-right" id="btnIcon"></i>
+            </button>
+        </form>
+
+        <div class="auth-footer">
+            <span id="footerText">ยังไม่มีบัญชีใช่ไหม?</span>
+            <span class="toggle-btn" id="toggleAction" onclick="toggleAuthMode()">สมัครสมาชิกที่นี่</span>
+        </div>
+    </div>
+
+    <!-- OTP Modal (Simulation) -->
+    <div id="otpOverlay" class="otp-overlay" style="display: none;">
+        <div class="otp-card animate__animated animate__zoomIn">
+            <div class="otp-icon"><i class="fas fa-shield-alt"></i></div>
+            <h3>ยืนยันรหัส OTP</h3>
+            <p>กรุณากรอกรหัส 6 หลักที่ส่งไปยังเบอร์ของคุณ <br> <span id="otpPhoneText"
+                    style="font-weight: 700; color: var(--p2);"></span></p>
+            <div class="otp-inputs">
+                <input type="text" maxlength="1" class="otp-input" oninput="moveNext(this, 1)">
+                <input type="text" maxlength="1" class="otp-input" oninput="moveNext(this, 2)">
+                <input type="text" maxlength="1" class="otp-input" oninput="moveNext(this, 3)">
+                <input type="text" maxlength="1" class="otp-input" oninput="moveNext(this, 4)">
+                <input type="text" maxlength="1" class="otp-input" oninput="moveNext(this, 5)">
+                <input type="text" maxlength="1" class="otp-input">
+            </div>
+            <button class="btn-submit mt-4" onclick="verifyOTP()">ยืนยันความปลอดภัย</button>
+            <p class="mt-3 text-muted" style="font-size: 0.8rem;">(จำลอง: กรอกอะไรก็ได้แล้วกดปุ่ม)</p>
+        </div>
+    </div>
+
+    <script>
+        let isLogin = true;
+        let selectedRole = 'user';
+
+        function updateRole(role) {
+            selectedRole = role;
+            const slider = document.getElementById('roleSlider');
+            const userBtn = document.getElementById('btnUser');
+            const driverBtn = document.getElementById('btnDriver');
+
+            if (role === 'user') {
+                slider.style.transform = 'translateX(0)';
+                userBtn.classList.add('active');
+                driverBtn.classList.remove('active');
+            } else {
+                slider.style.transform = 'translateX(100%)';
+                driverBtn.classList.add('active');
+                userBtn.classList.remove('active');
+            }
+        }
+
+        function toggleAuthMode() {
+            isLogin = !isLogin;
+            const subtitle = document.getElementById('authSubtitle');
+            const btnText = document.getElementById('btnText');
+            const footerText = document.getElementById('footerText');
+            const toggleAction = document.getElementById('toggleAction');
+            const regFields = document.getElementById('registerFields');
+            const card = document.querySelector('.auth-card');
+
+            // เพิ่ม Motion
+            card.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                card.style.transform = 'scale(1)';
+                if (isLogin) {
+                    subtitle.innerText = 'พร้อมเดินทางไปกับเราหรือยัง?';
+                    btnText.innerText = 'เข้าสู่ระบบเลย';
+                    footerText.innerText = 'ยังไม่มีบัญชีใช่ไหม?';
+                    toggleAction.innerText = 'สมัครสมาชิกที่นี่';
+                    regFields.style.display = 'none';
+                } else {
+                    subtitle.innerText = 'สมัครสมาชิกเพื่อเริ่มใช้บริการ';
+                    btnText.innerText = 'สมัครสมาชิกเลย';
+                    footerText.innerText = 'มีบัญชีอยู่แล้ว?';
+                    toggleAction.innerText = 'เข้าสู่ระบบตรงนี้';
+                    regFields.style.display = 'block';
+                }
+            }, 200);
+        }
+
+        async function handleAuth() {
+            const phone = document.getElementById('phone').value;
+            const password = document.getElementById('password').value;
+            const btnText = document.getElementById('btnText');
+            const btnIcon = document.getElementById('btnIcon');
+            const btnLoader = document.getElementById('btnLoader');
+
+            // UI Loading
+            btnText.innerText = isLogin ? 'กำลังเข้าสู่ระบบ...' : 'กำลังสมัครสมาชิก...';
+            btnIcon.style.display = 'none';
+            btnLoader.style.display = 'block';
+
+            if (!phone || !password) {
+                showError('ลืมใส่เบอร์หรือรหัสผ่านนะ!');
+                resetBtn();
+                return;
+            }
+
+            if (phone.length !== 10) {
+                showError('เบอร์โทรต้องมี 10 หลักนะจ๊ะ');
+                resetBtn();
+                return;
+            }
+
+            if (password.length !== 8) {
+                showError('รหัสผ่านต้องมี 8 หลักพอดีเป๊ะ!');
+                resetBtn();
+                return;
+            }
+
+            const BASE_URL = 'http://localhost:3007';
+            const endpoint = isLogin ? `${BASE_URL}/api/auth/login` : `${BASE_URL}/api/auth/register`;
+            const body = isLogin
+                ? { phone, password }
+                : { phone, password, role: selectedRole, name: 'User' };
+
+            try {
+                const res = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(body)
+                });
+
+                let data;
+                const contentType = res.headers.get("content-type");
+                if (contentType && contentType.includes("application/json")) {
+                    data = await res.json();
+                } else {
+                    throw new Error('ระบบสะดุดนิดหน่อย ลองใหม่อีกทีนะ');
+                }
+
+                if (!res.ok) throw new Error(data.message || 'เกิดข้อผิดพลาด');
+
+                if (isLogin) {
+                    showOTPModal(phone, data);
+                } else {
+                    showSuccess('สร้างบัญชีสำเร็จ! กรุณายืนยันรหัส OTP');
+                    setTimeout(() => showOTPModal(phone, data), 1500);
+                }
+
+            } catch (err) {
+                showError(err.message);
+                resetBtn();
+            }
+        }
+
+        let pendingAuthData = null;
+
+        function showOTPModal(phone, data) {
+            pendingAuthData = data;
+            document.getElementById('otpPhoneText').innerText = phone;
+            document.getElementById('otpOverlay').style.display = 'flex';
+            document.querySelector('.otp-input').focus();
+            resetBtn();
+        }
+
+        function moveNext(el, nextIndex) {
+            if (el.value.length === 1) {
+                const inputs = document.querySelectorAll('.otp-input');
+                if (inputs[nextIndex]) inputs[nextIndex].focus();
+            }
+        }
+
+        function verifyOTP() {
+            showSuccess(isLogin ? "เข้าสู่ระบบสำเร็จ! เตรียมซิ่งได้เลย 🏎️" : "สมัครสำเร็จแล้ว!");
+            document.getElementById('otpOverlay').style.display = 'none';
+            setTimeout(() => saveAndRedirect(pendingAuthData), 1000);
+        }
+
+        function resetBtn() {
+            document.getElementById('btnText').innerText = isLogin ? 'เข้าสู่ระบบเลย' : 'สมัครสมาชิกเลย';
+            document.getElementById('btnIcon').style.display = 'block';
+            document.getElementById('btnLoader').style.display = 'none';
+        }
+
+        function showError(msg) {
+            const err = document.getElementById('errorMessage');
+            err.innerHTML = `<i class="fas fa-exclamation-circle"></i> <span>${msg}</span>`;
+            err.style.display = 'flex';
+            setTimeout(() => { err.style.display = 'none'; }, 3000);
+        }
+
+        function showSuccess(msg) {
+            const sc = document.getElementById('successMessage');
+            sc.innerHTML = `<i class="fas fa-check-circle"></i> <span>${msg}</span>`;
+            sc.style.display = 'flex';
+
+            // Trigger Confetti
+            createConfetti();
+
+            setTimeout(() => { sc.style.display = 'none'; }, 2000);
+        }
+
+        function createConfetti() {
+            for (let i = 0; i < 50; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti-piece animate__animated animate__fadeOut';
+                confetti.style.left = (Math.random() * 100) + 'vw';
+                confetti.style.backgroundColor = ['#FFD700', '#FF0055', '#00E5FF', '#00FF99'][Math.floor(Math.random() * 4)];
+                confetti.style.width = (Math.random() * 10 + 5) + 'px';
+                confetti.style.height = (Math.random() * 10 + 5) + 'px';
+
+                document.body.appendChild(confetti);
+
+                const duration = Math.random() * 2 + 1;
+                const endX = (Math.random() - 0.5) * 200; // Drift left/right
+
+                confetti.animate([
+                    { top: '-20px', opacity: 1, transform: 'rotate(0deg)' },
+                    { top: '100vh', opacity: 0, transform: `translateX(${endX}px) rotate(${Math.random() * 720}deg)` }
+                ], {
+                    duration: duration * 1000,
+                    easing: 'cubic-bezier(.11,.77,.2,1)'
+                });
+
+                setTimeout(() => confetti.remove(), duration * 2000);
+            }
+        }
+
+        document.addEventListener('mousemove', (e) => {
+            const shapes = document.querySelectorAll('.bg-shape');
+            const glow = document.getElementById('mouseGlow');
+
+            // แสงตามเมาส์
+            glow.style.left = e.clientX + 'px';
+            glow.style.top = e.clientY + 'px';
+
+            // รูปทรงพื้นหลังขยับตามเมาส์
+            const x = (window.innerWidth - e.pageX * 2) / 100;
+            const y = (window.innerHeight - e.pageY * 2) / 100;
+
+            shapes.forEach(shape => {
+                const speed = shape.getAttribute('data-speed');
+                shape.style.transform = `translateX(${x * speed}px) translateY(${y * speed}px)`;
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialize 3D Tilt
+            VanillaTilt.init(document.querySelector(".auth-card"), {
+                max: 5,
+                speed: 400,
+                glare: true,
+                "max-glare": 0.2,
+            });
+        });
+
+        function saveAndRedirect(data) {
+            localStorage.setItem('token', data.token);
+            localStorage.setItem('role', data.role);
+            localStorage.setItem('name', data.name);
+            localStorage.setItem('phone', data.phone);
+            if (data.role === 'driver') {
+                window.location.href = '/driver/dashboard.html';
+            } else {
+                window.location.href = '/user/home.html';
+            }
+        }
+    </script>
+</body>
+
+</html>

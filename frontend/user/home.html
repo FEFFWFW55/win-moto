@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Win Driver - บริการเรียกรถวินอันดับ 1</title>
+
+  <!-- Fonts & Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700;800&family=Outfit:wght@400;700;900&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+  <!-- Vanilla Tilt -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.8.1/vanilla-tilt.min.js"></script>
+  <meta name="theme-color" content="#FFD700">
+
+  <link rel="stylesheet" href="./css/style.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="/js/auth-check.js"></script>
+</head>
+
+<body>
+
+  <!-- Preloader -->
+  <!-- Preloader -->
+  <div id="app-preloader" class="preloader-overlay">
+    <!-- Animated Blobs Background -->
+    <div class="blob b-1"></div>
+    <div class="blob b-2"></div>
+    <div class="blob b-3"></div>
+    <div class="blob b-4"></div>
+
+    <div class="preloader-content animate__animated animate__fadeIn">
+      <div class="brand-logo-large rubberBand-anim">
+        <i class="fas fa-motorcycle"></i>
+      </div>
+      <h2 class="tracking-in-expand">Win Driver</h2>
+
+      <!-- Road Animation -->
+      <div class="road-loader">
+        <div class="road-strip__line"></div>
+        <div class="mini-bike-rider">
+          <div class="wind-effect"></div>
+          <i class="fas fa-motorcycle"></i>
+        </div>
+      </div>
+
+      <p class="pulse-text">วินด่วน... กำลังสตาร์ทเครื่อง ✨</p>
+    </div>
+  </div>
+
+  <!-- 2. แผนที่ (Leaflet Map Engine) -->
+  <div id="map-container" class="custom-map-engine">
+    <div id="map" style="width: 100%; height: 100%;"></div>
+  </div>
+
+  <!-- App Shell -->
+  <main class="app-shell">
+
+    <!-- 1. โปรไฟล์ขวาบน -->
+    <header class="top-nav-new">
+      <div class="brand">
+        <img src="https://cdn.phototourl.com/uploads/2026-01-25-d3a1e506-64e3-47ea-be7f-09e23ec0c646.png" width="30">
+        <span>Win Driver</span>
+      </div>
+
+      <div class="user-header-box">
+        <button class="history-btn" onclick="toggleHistory()" title="ประวัติการเดินทาง">
+          <i class="fas fa-clock-rotate-left"></i>
+        </button>
+        <div class="user-info-text">
+          <span id="user-phone-val">0XX-XXX-XXXX</span>
+          <small id="btn-logout" onclick="window.logout()" style="cursor: pointer;">ออกจากระบบ</small>
+        </div>
+        <div class="avatar-box">
+          <img id="user-avatar-main" src="" alt="User">
+        </div>
+      </div>
+      </div>
+    </header>
+
+    <!-- UI Panels -->
+    <div class="ui-content-layer">
+
+      <!-- Selection Confirmation Overlays -->
+      <div id="selection-confirm" class="confirm-pill animate__animated animate__slideInUp" style="display: none;">
+        <p id="selection-text">กดเพื่อเลือกจุดนี้</p>
+        <button onclick="confirmLocation()">ยืนยันพิกัด</button>
+      </div>
+
+      <!-- 3. เรียกรถ & 7. ค่าโดยสาร (Estimated) -->
+      <!-- 3. เรียกรถ & 7. ค่าโดยสาร (Estimated) -->
+      <section id="panel-booking" class="bottom-card animate__animated hide-panel" data-tilt data-tilt-max="3"
+        data-tilt-speed="400" data-tilt-glare data-tilt-max-glare="0.1">
+        <div class="card-drag-handle"></div>
+        <h3>รายละเอียดการเดินทาง</h3>
+
+        <div class="trip-info-mini">
+          <div class="info-row"><i class="fas fa-route"></i> ระยะทาง <strong id="val-dist">-</strong></div>
+          <div class="info-row"><i class="far fa-clock"></i> เวลาประมาณ <strong id="val-time">-</strong></div>
+        </div>
+
+        <div class="vehicle-selector">
+          <label>เลือกประเภทรถ</label>
+          <div class="v-options">
+            <button class="v-btn active" onclick="selectVehicle('standard')">
+              <i class="fas fa-motorcycle"></i>
+              <span>มอเตอร์ไซค์วิน</span>
+              <div class="v-price" id="price-standard">฿25</div>
+            </button>
+            <button class="v-btn" onclick="selectVehicle('express')">
+              <i class="fas fa-bolt"></i>
+              <span>วินด่วนพิเศษ</span>
+              <div class="v-price" id="price-express">฿35</div>
+            </button>
+          </div>
+        </div>
+
+        <div class="payment-method">
+          <i class="fas fa-money-bill-wave"></i>
+          <select id="pay-method">
+            <option value="cash">เงินสด (Cash)</option>
+            <option value="qr">สแกน QR</option>
+            <option value="wallet">Wallet</option>
+          </select>
+        </div>
+
+        <button class="call-action-btn pulse-btn" onmousedown="createRipple(event)"
+          onclick="requestRide()">เรียกรถเลย</button>
+      </section>
+
+      <!-- 4. สถานะการเดินทาง -->
+      <section id="panel-status" class="bottom-card animate__animated hide-panel" data-tilt data-tilt-max="3"
+        data-tilt-speed="400">
+        <div id="status-finding" class="status-search">
+          <div class="radar-scan">
+            <div class="scan-ring"></div>
+            <div class="orbit-bike-wrapper"><i class="fas fa-motorcycle"></i></div>
+            <i class="fas fa-motorcycle radar-icon"></i>
+            <div class="particles"><span></span><span></span><span></span><span></span></div>
+          </div>
+          <h4>กำลังหาคนขับ</h4>
+          <button class="cancel-btn" onclick="cancelRequest()">ยกเลิกการเรียก</button>
+        </div>
+
+        <div id="status-active" style="display: none;">
+          <div class="trip-status-badge" id="trip-phase">คนขับรับงานแล้ว</div>
+
+          <!-- 6. ข้อมูลคนขับ -->
+          <div class="driver-card-v2">
+            <img id="driver-avatar" src="" class="driver-img">
+            <div class="driver-details">
+              <h4 id="driver-name-val">พี่วิน...</h4>
+              <div class="v-badge"><i class="fas fa-motorcycle"></i> <span id="driver-plate-val">กข-1234</span></div>
+            </div>
+            <div class="driver-actions">
+              <a id="driver-phone-btn" href="tel:#"><i class="fas fa-phone"></i></a>
+            </div>
+          </div>
+
+          <div class="tracking-steps">
+            <div class="t-step" id="t-picking"><span>1</span>
+              <p>กําลังมา</p>
+            </div>
+            <div class="t-step" id="t-arrived"><span>2</span>
+              <p>ถึงจุดรับ</p>
+            </div>
+            <div class="t-step" id="t-trip"><span>3</span>
+              <p>เริ่มเดินทาง</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div><!-- End UI Content -->
+
+  </main>
+
+  <!-- 8. รีวิว & คะแนน -->
+  <div id="modal-rating" class="modal-overlay hide-panel">
+    <div class="modal-card animate__animated animate__zoomIn" data-tilt data-tilt-max="5" data-tilt-speed="400">
+      <div class="finish-icon"><i class="fas fa-check-circle"></i></div>
+      <h3>ถึงที่หมายแล้ว!</h3>
+      <!-- 7. ค่าโดยสารจริง -->
+      <div class="actual-fare-box">
+        <small>ค่าโดยสารจริง</small>
+        <h1 id="actual-price-val">฿0</h1>
+      </div>
+
+      <p>ช่วยให้คะแนนพี่วินหน่อยครับ</p>
+      <div class="star-group">
+        <i class="far fa-star" data-s="1"></i>
+        <i class="far fa-star" data-s="2"></i>
+        <i class="far fa-star" data-s="3"></i>
+        <i class="far fa-star" data-s="4"></i>
+        <i class="far fa-star" data-s="5"></i>
+      </div>
+      <textarea id="review-input" placeholder="เขียนรีวิวของคุณ..."></textarea>
+      <button class="finish-btn" onclick="submitRatingAndFinish()">ส่งคะแนนและเสร็จสิ้น</button>
+    </div>
+  </div>
+
+  <div id="notification-v3" class="toast-container"></div>
+
+  <!-- 9. ประวัติการเดินทาง -->
+  <aside id="drawer-history" class="side-drawer">
+    <div class="drawer-header">
+      <h3><i class="fas fa-history"></i> ประวัติการเดินทาง</h3>
+      <button class="close-drawer" onclick="toggleHistory()"><i class="fas fa-times"></i></button>
+    </div>
+    <div id="history-list-content" class="history-scroll-area">
+      <div class="empty-history">
+        <i class="fas fa-route"></i>
+        <p>ยังไม่มีประวัติการเดินทาง</p>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Map Controls (Fixed Position) -->
+  <div class="zoom-controls">
+    <button onclick="map.zoomIn()" onmousedown="createRipple(event)"><i class="fas fa-plus"></i></button>
+    <button onclick="map.zoomOut()" onmousedown="createRipple(event)"><i class="fas fa-minus"></i></button>
+  </div>
+
+  <button class="btn-gps-fixed pulse-btn" onclick="goToCurrentPos()" onmousedown="createRipple(event)">
+    <i class="fas fa-location-arrow"></i>
+  </button>
+
+  <!-- Scripts -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+  <script src="./js/map.js"></script>
+
+  <script>
+    // Preloader fade out
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        const preloader = document.getElementById('app-preloader');
+        preloader.classList.add('fade-out');
+        setTimeout(() => preloader.style.display = 'none', 500);
+      }, 1500); // Show logo for 1.5s
+    });
+
+    // Ripple Effect Logic
+    function createRipple(event) {
+      const button = event.currentTarget;
+      const circle = document.createElement("span");
+      const diameter = Math.max(button.clientWidth, button.clientHeight);
+      const radius = diameter / 2;
+
+      circle.style.width = circle.style.height = `${diameter}px`;
+      circle.style.left = `${event.clientX - button.getBoundingClientRect().left - radius}px`;
+      circle.style.top = `${event.clientY - button.getBoundingClientRect().top - radius}px`;
+      circle.classList.add("ripple");
+
+      const ripple = button.getElementsByClassName("ripple")[0];
+      if (ripple) {
+        ripple.remove();
+      }
+
+      button.appendChild(circle);
+    }
+
+    // Add ripple to other buttons
+    document.querySelectorAll('.v-btn, .history-btn, .fab-location').forEach(btn => {
+      btn.onmousedown = createRipple;
+      btn.style.position = 'relative';
+      btn.style.overflow = 'hidden';
+    });
+
+    // Sound Effect (Pop Sound base64)
+    const audioPop = new Audio("data:audio/wav;base64,UklGRl9vT19XQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YU..."); // Shortened for brevity, will use real short base64 or just logic
+    // Using a very simple beep or standard web audio API is better to avoid huge strings. 
+    // Let's use a standard frequency beep context for simplicity and cleaner code.
+
+    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
+    function playInteractSound() {
+      if (audioContext.state === 'suspended') audioContext.resume();
+      const oscillator = audioContext.createOscillator();
+      const gainNode = audioContext.createGain();
+
+      oscillator.type = 'sine';
+      oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
+      oscillator.frequency.exponentialRampToValueAtTime(300, audioContext.currentTime + 0.1);
+
+      gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+      gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+
+      oscillator.connect(gainNode);
+      gainNode.connect(audioContext.destination);
+
+      oscillator.start();
+      oscillator.stop(audioContext.currentTime + 0.1);
+    }
+
+
+    // Map Sparkle & Sound on Click (Delegated to Map Container)
+    document.getElementById('map-container').addEventListener('mousedown', (e) => {
+      // Create Sparkle
+      const sparkle = document.createElement('div');
+      sparkle.className = 'map-sparkle';
+      sparkle.style.left = e.clientX + 'px';
+      sparkle.style.top = e.clientY + 'px';
+      document.body.appendChild(sparkle);
+      setTimeout(() => sparkle.remove(), 800);
+
+      // Play Sound
+      playInteractSound();
+    });
+
+    // Add sound to all buttons
+    document.querySelectorAll('button').forEach(btn => {
+      btn.addEventListener('click', () => playInteractSound());
+    });
+
+    // Intersection Observer for Scroll/Show Animations
+    const appearOptions = {
+      threshold: 0.1,
+      rootMargin: "0px 0px -50px 0px"
+    };
+
+    const appearOnScroll = new IntersectionObserver(function (entries, appearOnScroll) {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add('animate__fadeInUp');
+        entry.target.classList.remove('hide-panel');
+        appearOnScroll.unobserve(entry.target);
+      });
+    }, appearOptions);
+
+    document.querySelectorAll('.bottom-card, .history-card').forEach(el => {
+      // appearOnScroll.observe(el); // Let the logic handle showing panels
+    });
+
+  </script>
+
+</body>
+
+</html>
