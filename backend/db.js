@@ -1,4 +1,5 @@
 const mysql = require('mysql2/promise');
+const fs = require('fs');
 require('dotenv').config();
 
 const pool = mysql.createPool({
@@ -12,7 +13,8 @@ const pool = mysql.createPool({
   queueLimit: 0,
   ssl: process.env.DB_SSL === 'true' ? {
     minVersion: 'TLSv1.2',
-    rejectUnauthorized: true
+    rejectUnauthorized: true,
+    ca: process.env.DB_CA ? fs.readFileSync(process.env.DB_CA) : undefined
   } : null
 });
 

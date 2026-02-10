@@ -3,7 +3,7 @@ let isOnline = false;
 let currentJob = null;
 let currentRouteLine = null;
 let markers = {}; // Store all markers
-const socket = io('http://localhost:3007');
+const socket = io();
 
 // --- Map Initialization (Leaflet) ---
 function initMap() {

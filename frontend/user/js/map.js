@@ -7,7 +7,7 @@ let userRating = 0;
 let markers = {};
 let routeLine = null;
 
-const socket = io('http://localhost:3007');
+const socket = io();
 
 // PNRU Buildings Data (GeoJSON-like structure)
 const PNRU_LOCATIONS = [];

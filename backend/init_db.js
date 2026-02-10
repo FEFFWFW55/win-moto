@@ -14,7 +14,8 @@ async function initDB() {
             multipleStatements: true,
             ssl: process.env.DB_SSL === 'true' ? {
                 minVersion: 'TLSv1.2',
-                rejectUnauthorized: true
+                rejectUnauthorized: true,
+                ca: process.env.DB_CA ? fs.readFileSync(process.env.DB_CA) : undefined
             } : null
         });
 

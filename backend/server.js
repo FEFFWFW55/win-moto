@@ -110,7 +110,12 @@ app.use((err, req, res, next) => {
   res.status(500).json({ message: 'Internal Server Error' });
 });
 
-const PORT = process.env.PORT || 3007; // บังคับใช้ 3007 หรือตาม .env
-server.listen(PORT, () => {
-  console.log(`🚀 Win Driver Local Server running on port ${PORT}`);
-});
+const PORT = process.env.PORT || 3007;
+
+if (require.main === module) {
+  server.listen(PORT, () => {
+    console.log(`🚀 Win Driver Local Server running on port ${PORT}`);
+  });
+}
+
+module.exports = app;
